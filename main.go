@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 )
 
-
 func cepHandler(w http.ResponseWriter, r *http.Request) {
-	cep := r.URL.Query().Get("cep") 
+	cep := r.URL.Query().Get("cep")
+
 
 	resp, err := http.Get(fmt.Sprintf("https://viacep.com.br/ws/%s/json/", cep))
 	if err != nil {
@@ -23,7 +23,7 @@ func cepHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		http.Error(w, "Erro ao ler a resposta do ViaCEP", http.StatusInternalServerError)
 		return
@@ -34,8 +34,8 @@ func cepHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/cep", cepHandler)
+	http.HandleFunc("/cep", cepHandler) 
 
 	fmt.Println("Servidor rodando na porta 8080...")
-	log.Fatal(http.ListenAndServe(":8080", nil)) 
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
